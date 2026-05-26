@@ -40,6 +40,14 @@ app.use((req, res) => {
 
 app.use((error, _req, res, _next) => {
   console.error('Express Error Handler:', error);
+
+  if (error instanceof SyntaxError && 'body' in error) {
+    return res.status(400).json({
+      error: 'Invalid JSON body',
+      details: [error.message]
+    });
+  }
+
   if (error.message === 'Not allowed by CORS') {
     return res.status(400).json({ error: 'CORS origin is not allowed' });
   }
