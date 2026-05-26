@@ -3,6 +3,8 @@ import mongoose from 'mongoose';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import { MongoMemoryServer } from 'mongodb-memory-server';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 import ticketRoutes from './routes/tickets.js';
 
 dotenv.config();
@@ -11,7 +13,7 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 let mongoServer;
 
-const allowedOrigins = (process.env.CLIENT_ORIGIN || '')
+const allowedOrigins = (process.env.CLIENT_ORIGIN || process.env.CLIENT_URL || '')
   .split(',')
   .map(origin => origin.trim())
   .filter(Boolean);
@@ -37,6 +39,7 @@ app.use((req, res) => {
 });
 
 app.use((error, _req, res, _next) => {
+  console.error('Express Error Handler:', error);
   if (error.message === 'Not allowed by CORS') {
     return res.status(400).json({ error: 'CORS origin is not allowed' });
   }
@@ -70,7 +73,10 @@ export const closeDB = async () => {
 
 export default app;
 
-if (process.env.NODE_ENV !== 'test') {
+const isEntryPoint = process.argv[1] &&
+  path.resolve(process.argv[1]) === fileURLToPath(import.meta.url);
+
+if (process.env.NODE_ENV !== 'test' && isEntryPoint) {
   connectDB().then(() => {
     app.listen(PORT, () => {
       console.log(`Server running on port ${PORT}`);

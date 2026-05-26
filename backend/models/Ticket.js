@@ -43,7 +43,7 @@ const ticketSchema = new mongoose.Schema({
   }
 }, { timestamps: true });
 
-ticketSchema.pre('save', function setResolvedAt(next) {
+ticketSchema.pre('save', function(next) {
   if (this.isModified('status')) {
     if (this.status === 'resolved' && !this.resolvedAt) {
       this.resolvedAt = new Date();

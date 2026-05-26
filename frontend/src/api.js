@@ -1,7 +1,9 @@
 import axios from 'axios';
 
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:5000'
+  baseURL: import.meta.env.VITE_API_BASE_URL ||
+    import.meta.env.VITE_API_URL ||
+    'https://bajaj-bfhl-1-0ex0.onrender.com'
 });
 
 export const getTickets = async (filters) => {
