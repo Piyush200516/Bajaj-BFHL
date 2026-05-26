@@ -41,15 +41,16 @@ function App() {
 
   const handleStatusChange = async (id, newStatus) => {
     try {
-      // Optimistic update
       setTickets(tickets.map(t => t._id === id ? { ...t, status: newStatus } : t));
       await updateTicketStatus(id, newStatus);
-      loadData(); // refresh to get new SLA data
+      loadData();
     } catch (err) {
       alert(err.response?.data?.error || 'Failed to update ticket');
-      loadData(); // revert
+      loadData();
     }
   };
+
+  const statusCounts = stats?.countsByStatus || {};
 
   return (
     <div className="app-container">
@@ -69,15 +70,15 @@ function App() {
             <span className="stat-label">Total Tickets</span>
           </div>
           <div className="stat-item">
-            <span className="stat-value">{stats.open}</span>
+            <span className="stat-value">{statusCounts.open || 0}</span>
             <span className="stat-label">Open</span>
           </div>
           <div className="stat-item">
-            <span className="stat-value">{stats.in_progress}</span>
+            <span className="stat-value">{statusCounts.in_progress || 0}</span>
             <span className="stat-label">In Progress</span>
           </div>
           <div className="stat-item">
-            <span className="stat-value" style={{color: 'var(--priority-urgent)'}}>{stats.breached}</span>
+            <span className="stat-value" style={{color: 'var(--priority-urgent)'}}>{stats.currentBreachedOpenTickets || 0}</span>
             <span className="stat-label">SLA Breached</span>
           </div>
         </div>

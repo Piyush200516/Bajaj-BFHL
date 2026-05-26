@@ -10,6 +10,9 @@ const validTransitions = {
 
 export default function TicketCard({ ticket, onStatusChange }) {
   const allowedNext = validTransitions[ticket.status];
+  const ageLabel = ticket.resolvedAt
+    ? `${ticket.ageMinutes} min to resolve`
+    : formatDistanceToNow(new Date(ticket.createdAt), { addSuffix: true });
 
   return (
     <div className="ticket-card" style={{ borderLeftColor: `var(--priority-${ticket.priority})` }}>
@@ -20,7 +23,7 @@ export default function TicketCard({ ticket, onStatusChange }) {
       
       <div className="ticket-meta">
         <div>{ticket.customerEmail}</div>
-        <div>Age: {formatDistanceToNow(new Date(ticket.createdAt))}</div>
+        <div>Age: {ageLabel}</div>
       </div>
 
       {ticket.slaBreached && (

@@ -1,34 +1,40 @@
 import mongoose from 'mongoose';
 
-const validTransitions = {
-  open: ['in_progress'],
-  in_progress: ['resolved'],
-  resolved: ['closed', 'in_progress'],
-  closed: ['resolved']
-};
+export const PRIORITIES = ['low', 'medium', 'high', 'urgent'];
+export const STATUSES = ['open', 'in_progress', 'resolved', 'closed'];
 
 const ticketSchema = new mongoose.Schema({
   subject: {
     type: String,
-    required: true
+    required: [true, 'Subject is required'],
+    trim: true
   },
   description: {
     type: String,
-    required: true
+    required: [true, 'Description is required'],
+    trim: true
   },
   customerEmail: {
     type: String,
-    required: true,
-    match: /.+\@.+\..+/
+    required: [true, 'Customer email is required'],
+    lowercase: true,
+    trim: true,
+    match: [/^[^\s@]+@[^\s@]+\.[^\s@]+$/, 'Customer email must be valid']
   },
   priority: {
     type: String,
-    enum: ['low', 'medium', 'high', 'urgent'],
+    enum: {
+      values: PRIORITIES,
+      message: 'Priority must be one of: low, medium, high, urgent'
+    },
     default: 'medium'
   },
   status: {
     type: String,
-    enum: ['open', 'in_progress', 'resolved', 'closed'],
+    enum: {
+      values: STATUSES,
+      message: 'Status must be one of: open, in_progress, resolved, closed'
+    },
     default: 'open'
   },
   resolvedAt: {
@@ -37,7 +43,7 @@ const ticketSchema = new mongoose.Schema({
   }
 }, { timestamps: true });
 
-ticketSchema.pre('save', function(next) {
+ticketSchema.pre('save', function setResolvedAt(next) {
   if (this.isModified('status')) {
     if (this.status === 'resolved' && !this.resolvedAt) {
       this.resolvedAt = new Date();

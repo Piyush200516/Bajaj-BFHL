@@ -1,10 +1,12 @@
 {
   "name": "backend",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "DeskFlow support ticket triage API",
+  "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node server.js",
+    "dev": "node --watch server.js",
+    "test:api": "node scripts/apiSmokeTest.js"
   },
   "keywords": [],
   "author": "",
@@ -14,6 +16,7 @@
     "cors": "^2.8.6",
     "dotenv": "^17.4.2",
     "express": "^5.2.1",
+    "mongodb-memory-server": "^11.1.0",
     "mongoose": "^9.6.2"
   }
 }
