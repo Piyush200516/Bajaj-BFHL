@@ -1,4 +1,4 @@
-const apiUrl = 'http://localhost:5000/tickets';
+const apiUrl = 'https://bajaj-bfhl-1-0ex0.onrender.com/tickets';
 
 const data = {
   subject: "Bajaj",
